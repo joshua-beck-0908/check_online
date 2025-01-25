@@ -4,23 +4,13 @@
 
 #include <sys/wait.h>
 
+#include "check_online.h"
+
 #define RETURN_BUFFER_SIZE 1024
 #define COMMAND_BUFFER_SIZE 1024
 #define PING_COMMAND "ping -c 4"
 #define DEFAULT_SERVER "8.8.8.8"
 
-FILE *command_handle;
-int command_return;
-
-int can_ping_net(char *ip_or_url);
-void print_result_message(int command_return);
-bool did_command_succeed(int wait_status);
-_Noreturn void fatal_error(char* error_message);
-void stop_if_error_occurred(int command_return);
-void build_command_with_buffer_and_server(char *buffer, char *server);
-FILE *start_ping_process(char *command);
-void display_messages(FILE *command_handle);
-int get_command_result_or_exit(FILE *command_handle);
 
 
 int main(int argc, char *argv[]) {
@@ -33,6 +23,7 @@ int main(int argc, char *argv[]) {
 }
 
 int can_ping_net(char* ip_or_url) {
+    FILE *command_handle;
     char command_to_run[COMMAND_BUFFER_SIZE];
     
     build_command_with_buffer_and_server(command_to_run, ip_or_url);
@@ -78,6 +69,7 @@ void build_command_with_buffer_and_server(char *buffer, char *server) {
 }
 
 FILE *start_ping_process(char *command) {
+    FILE *command_handle;
     command_handle = popen(command, "r");
     if (!command_handle) fatal_error("Error starting command.");
     return command_handle;
@@ -93,6 +85,8 @@ void display_messages(FILE *command_handle) {
 
 int get_command_result_or_exit(FILE *command_handle) {
     int ping_result;
+    int command_return;
+    
     command_return = pclose(command_handle);
     stop_if_error_occurred(command_return);
     ping_result = did_command_succeed(command_return);
