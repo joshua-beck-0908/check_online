@@ -5,6 +5,7 @@
 .run
 .run.fish
 .mainfile
+.build.fish
 
 # Stock file from: https://github.com/github/gitignore/blob/main/Python.gitignore
 # Byte-compiled / optimized / DLL files
